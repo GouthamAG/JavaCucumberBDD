@@ -1,12 +1,14 @@
 package stepDefinitions;
 
+import java.io.FileNotFoundException;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
+import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -27,20 +29,20 @@ public class StepDefinition extends Utils{
 	TestDataBuild data = new TestDataBuild();
 	
 	@Given("Add Place Payload")
-	public void add_place_payload() {
+	public void add_place_payload() throws FileNotFoundException {
 		
 		res = given()
 				.spec(requestSpecification())
 				.body(data.addPlacePayLoad());
-		
+	}
+	
+	@When("user calls {string} with Post HTTP request")
+	public void user_calls_with_post_http_request(String string) {		
 		resspec = new ResponseSpecBuilder()
 				.expectStatusCode(200)
 				.expectContentType(ContentType.JSON)
 				.build();
-	}
-	
-	@When("user calls {string} with Post HTTP request")
-	public void user_calls_with_post_http_request(String string) {
+
 		response = res
 				.when().post("/maps/api/place/add/json")
 				.then().spec(resspec).extract().response();
