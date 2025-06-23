@@ -1,7 +1,5 @@
 package stepDefinitions;
 
-import java.io.FileNotFoundException;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -16,6 +14,8 @@ import io.restassured.response.Response;
 import static io.restassured.RestAssured.*;
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
 import resources.TestDataBuild;
 import resources.Utils;
 
@@ -29,7 +29,7 @@ public class StepDefinition extends Utils{
 	TestDataBuild data = new TestDataBuild();
 	
 	@Given("Add Place Payload")
-	public void add_place_payload() throws FileNotFoundException {
+	public void add_place_payload() throws IOException {
 		
 		res = given()
 				.spec(requestSpecification())
