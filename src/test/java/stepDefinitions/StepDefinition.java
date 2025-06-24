@@ -16,6 +16,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
+import resources.APIResources;
 import resources.TestDataBuild;
 import resources.Utils;
 
@@ -36,16 +37,25 @@ public class StepDefinition extends Utils{
 				.body(data.addPlacePayLoad(name, language, address));
 	}
 	
-	@When("user calls {string} with Post HTTP request")
-	public void user_calls_with_post_http_request(String string) {		
+	@When("user calls {string} with {string} HTTP request")
+	public void user_calls_with_post_http_request(String resource, String httpMethod) {		
+		
+		APIResources resourceAPI = APIResources.valueOf(resource);
+		System.out.println(resourceAPI.getResource()); 
+		
 		resspec = new ResponseSpecBuilder()
 				.expectStatusCode(200)
 				.expectContentType(ContentType.JSON)
 				.build();
 
-		response = res
-				.when().post("/maps/api/place/add/json")
-				.then().spec(resspec).extract().response();
+		if(httpMethod.equalsIgnoreCase("POST")) {
+			response = res.when().post(resourceAPI.getResource());
+		} else if(httpMethod.equalsIgnoreCase("GET")) { 
+			response = res.when().get(resourceAPI.getResource());
+		}
+			
+			
+			//				.then().spec(resspec).extract().response();
 	}
 	
 	@Then("the API call got success with status code {int}")
