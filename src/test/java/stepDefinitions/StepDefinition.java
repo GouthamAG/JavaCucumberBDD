@@ -22,12 +22,14 @@ import resources.Utils;
 
 
 public class StepDefinition extends Utils{
-	
+	JsonPath js;
 	RequestSpecification res;
 	ResponseSpecification resspec;
 	Response response;
+	String place_id;
 	
 	TestDataBuild data = new TestDataBuild();
+	
 	
 	@Given("Add Place Payload with {string} {string} {string}")
 	public void add_place_payload_with(String name, String language, String address) throws IOException {
@@ -59,15 +61,32 @@ public class StepDefinition extends Utils{
 	}
 	
 	@Then("the API call got success with status code {int}")
-	public void the_api_call_got_success_with_status_code(Integer int1) {
-			assertEquals(response.getStatusCode(),200);
+	public void the_api_call_got_success_with_status_code(Integer expectedStatusCode) {
+			assertEquals(expectedStatusCode.intValue(), response.getStatusCode() );
 	}
 	
 	@Then("{string} in response body is {string}")
 	public void in_response_body_is(String keyValue, String expectedValue) {
-		String responseString = response.asString();
-		JsonPath js = new JsonPath(responseString);
-		assertEquals(js.get(keyValue).toString(), expectedValue);
+		assertEquals(getJsonPath(response, keyValue), expectedValue);
+	}
+	
+	@When("verify place_id created maps to {string} using {string}")
+	public void verify_place_id_created_maps_to_using(String expectedPlaceName, String resource) throws IOException {
+		// Prepare request spec
+		String place_id = getJsonPath(response, "place_id");
+		
+		res = given()
+				.spec(requestSpecification())
+				.queryParam("place_id", place_id);
+		
+		// hit get API call
+		user_calls_with_post_http_request(resource, "GET");
+		
+		// Extract place name
+		String actualPlacename = getJsonPath(response, "name");
+		
+		// Validation of place name
+		assertEquals(expectedPlaceName, actualPlacename);
 	}
 
 }
