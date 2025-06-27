@@ -11,4 +11,15 @@ Scenario Outline: Verify if Place is being successfully added using AddPlaceAPI
 	Examples:
 		| name    | language | address 						|
 		| AAHouse1 | English1  | World Cross Center1 |
-		| BBHouse1 | Spanish1  | Sea Cross Center1   |	
+		| BBHouse1 | Spanish1  | Sea Cross Center1   |
+		
+		
+		
+Scenario: Verify if Delete Place functionality is working
+	Given DeletePlace Payload
+	When user calls "deletePlaceAPI" with "POST" HTTP request
+	Then the API call got success with status code 200
+	And "status" in response body is "OK"	
+		
+		
+			
